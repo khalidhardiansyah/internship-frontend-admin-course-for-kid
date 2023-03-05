@@ -53,7 +53,7 @@
 
   <vue-final-modal
     v-model="showModal"
-    classes="flex justify-center items-center"
+    classes="flex justify-center items-center mx-5"
     content-class="relative flex p-4 flex-col rounded-lg bg-white"
   >
     <button class=" absolute top-2 right-5" @click="openModal()">
@@ -61,7 +61,7 @@
     </button>
     <span class="font-bold text-xl text-center mb-3">Simpan Category</span>
 
-    <div class="modal__content w-96">
+    <div class="modal__content w-80 sm:w-96">
         <DangerAlert v-if="errmsg" :msg="errmsg"/>
         <SuccessAlert v-if="succmsg" :msg="succmsg"/>
         <FormKit type="form" :submit-label="[statusmodal ? 'Simpan Category':'Edit Category']" v-on:submit="[statusmodal ? addCategory() : editCategory()]">

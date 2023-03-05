@@ -7,7 +7,7 @@
 
         <div v-if="getKelas.length" class="wrapper" v-for="kelas in getKelas">
            
-                <CardsKelas class="mb-5"  :img="kelas.thumbnail_url" :desc="kelas.deskripsi_kelas" :title="kelas.name" :date="kelas.createdAt.substr(0, 10)" @click="router.push({
+                <CardsKelas class="mb-5"  :img="kelas.thumbnail_url" :desc="kelas.deskripsi_kelas.slice(0, 75)" :title="kelas.name" :date="kelas.createdAt.substr(0, 10)" @click="router.push({
                     path:`/kelas/${kelas.id}`
                 })" />
             

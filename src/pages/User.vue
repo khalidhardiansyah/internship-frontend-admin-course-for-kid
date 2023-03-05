@@ -14,6 +14,11 @@
         </div>
         
       </template>
+      <template #item-no_telp="item">
+        <div>
+          +62{{ item.no_telp }}
+        </div>
+      </template>
       <template #item-actions="item">
         <div class="whitespace-normal flex flex-row space-x-5">
           <button @click="restoreEdit(item.id, item.name, item.no_telp, item.email)"><img src="../assets/icons8-edit-100.png"
@@ -36,7 +41,7 @@
         <span class="font-bold text-3xl">X</span>
       </button>
       <span class="font-bold text-xl text-center mb-3">Update User</span>
-      <div class="modal__content w-96">
+      <div class="modal__content w-80 sm:w-96">
         <FormKit type="form" submit-label="Simpan User" @submit="editUser">
           <FormKit v-model="dataUser.name" type="text" label="Nama User" outer-class="mb-3"
             label-class="block mb-1 font-bold text-sm"

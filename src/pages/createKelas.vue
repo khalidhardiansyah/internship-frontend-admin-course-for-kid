@@ -48,6 +48,8 @@
             help-class="text-xs text-red-500"
             validation="required|text"
           />
+          <!-- <WYSIWYG v-model="dataKelas.deskripsi_kelas"></WYSIWYG>
+          {{ dataKelas.deskripsi_kelas }} -->
           <FormKit
             type="number"
             v-model="dataKelas.harga"
@@ -81,6 +83,7 @@
 
 <script setup>
 import DangerAlert from "@/components/DangerAlert.vue";
+// import WYSIWYG from "@/components/WYSIWYG.vue";
 import { computed, onMounted, reactive } from "vue";
 import { useStore } from "vuex";
 const store = useStore();

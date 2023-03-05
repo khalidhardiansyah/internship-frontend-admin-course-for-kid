@@ -21,9 +21,9 @@
                 <button @click="toggleModal(item.id)"><img src="../assets/icons8-delete-100.png" class="w-7" alt="delete"
               srcset=""></button>
             </template>
-            <template #item-tanggal="item">
+            <template #item-createdAt="item">
                 <div>
-                    {{ item.tanggal.substr(0, 10) }}
+                    {{ item.createdAt.slice(0, 10) }}
                 </div>
             </template>
             <template #expand="item">
@@ -105,12 +105,13 @@ const msg = reactive({
 const headers = [
     { text: "NAMA PENGIRIM", value: "name" },
     { text: "STATUS TRANSAKSI", value: "status_transaksi" },
-    { text: "TANGGAL TRANSAKSI", value: "tanggal" },
+    { text: "TANGGAL TRANSAKSI", value: "createdAt" },
     { text: "KELAS DIBELI", value: "kela.name" },
     { text: "USER", value: "user.name" },
     { text: "BANK", value: "bank.name" },
-    { text: "Rekening Tujuan", value: "bank.rekening_no" },
-    { text: "Nama Rekening Tujuan", value: "bank.rekening_name" },
+    { text: "HARGA KELAS", value: "kela.harga" },
+    { text: "Rekening TUJUAN", value: "bank.rekening_no" },
+    { text: "NAMA REKENING TUJUAN", value: "bank.rekening_name" },
     {text:"ACTIONS", value:"action"}
 ]
 

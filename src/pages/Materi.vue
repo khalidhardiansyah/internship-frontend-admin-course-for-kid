@@ -31,6 +31,12 @@
           />
         </div>
       </template>
+
+      <template #item-isLocked="item">
+        <span v-if="item.isLocked ===true">Materi Berbayar</span>
+        <span v-else>Materi Gratis</span>
+      </template>
+
       <template #item-actions="item">
         <div class="whitespace-normal flex flex-row space-x-5">
           <button
@@ -39,7 +45,8 @@
                 item.id,
                 item.name,
                 item.content,
-                item.deskripsi_content
+                item.deskripsi_content,
+                item.isLocked
               )
             "
           >
@@ -99,11 +106,12 @@
         >Buat Materi</tw-button
       >
     </div>
+
   </div>
   <vue-final-modal
     v-model="showModal"
-    classes="flex justify-center items-center mx-5 py-5"
-    content-class="relative flex p-4 flex-col rounded-lg bg-white w-full h-auto "
+    classes="flex justify-center items-center mx-5 py-5 "
+    content-class="relative flex p-4 flex-col rounded-lg bg-white w-96 sm:w-full"
   >
     <button class="absolute top-2 right-5" @click="openModal()">
       <span class="font-bold text-3xl">X</span>
@@ -116,8 +124,8 @@
         :submit-label="[statusmodal ? 'Simpan Materi' : 'Edit Materi']"
         v-on:submit="[statusmodal ? addMateri() : editMateri()]"
       >
-        <div class="flex flex-row space-x-5 overflow-y-auto my-7">
-          <div class="first__row__wrapper w-96">
+        <div class="flex flex-row  space-x-5 overflow-y-auto my-7  ">
+          <div class="first__row__wrapper sm:w-96 h-96">
             <FormKit
               v-model="materi.name"
               type="text"
@@ -140,10 +148,25 @@
               help-class="text-xs text-gray-500"
               validation="required|length:6"
             />
-            <DangerAlert :msg="err" />
-            <SuccessAlert :msg="succ" />
-          </div>
-          <div class="second__row__wraper flex-1 h-96">
+            <FormKit
+              v-model="materi.isLocked"
+              type="select"
+              label="Status Materi"
+              outer-class="mb-3"
+              label-class="block mb-1 font-bold text-sm"
+              inner-class="max-w-md border border-gray-400 rounded-lg mb-1 overflow-hidden focus-within:border-purple-500"
+              input-class="w-full h-10 px-3 border-none text-base text-gray-700 placeholder-gray-400"
+              help-class="text-xs text-gray-500"
+              placeholder="Pilih status materi"
+              name="status"
+              validation="required"
+              validation-visibility="dirty"
+            >
+              <option :value="false">Materi Gratis</option>
+              <option :value="true">Materi Berbayar</option>
+            </FormKit>
+            <!-- mobile -->
+            <div class="h-60 w-80 sm:hidden">
             <label for="" class="block mb-1 font-bold text-sm"
               >Deskripsi Materi</label
             >
@@ -152,6 +175,29 @@
               v-model:content="materi.deskripsi_content"
               contentType="html"
             />
+          
+          </div>
+            <DangerAlert :msg="err" />
+            <SuccessAlert :msg="succ" />
+          </div>
+          <!-- desktop -->
+          <div class="second__row__wraper flex-1 w-auto  hidden sm:block">
+            <label for="" class="block mb-1 font-bold text-sm"
+              >Deskripsi Materi</label
+            >
+            <QuillEditor
+            v-if="materi.deskripsi_content"
+              theme="snow"
+              v-model:content="materi.deskripsi_content"
+              contentType="html"
+            />
+            <QuillEditor
+            v-else
+              theme="snow"
+              v-model:content="materi.deskripsi_content"
+              contentType="html"
+            />
+ 
           </div>
         </div>
       </FormKit>
@@ -159,21 +205,21 @@
   </vue-final-modal>
 
   <vue-final-modal
-          v-model="GET_DISMODAL"
-          classes="flex justify-center items-center"
-          content-class="relative flex p-4 flex-col rounded-lg bg-white"
+    v-model="GET_DISMODAL"
+    classes="flex justify-center items-center"
+    content-class="relative flex p-4 flex-col rounded-lg bg-white"
+  >
+    <span class="font-bold text-xl mb-3">Hapus Materi?</span>
+    <div class="modal__content w-96">
+      <DangerAlert :msg="msg.err" />
+      <div class="flex">
+        <tw-button type="primary" round class="w-full" @click="deleteMateri"
+          >Hapus</tw-button
         >
-          <span class="font-bold text-xl mb-3">Hapus Materi?</span>
-          <div class="modal__content w-96">
-            <DangerAlert :msg="msg.err" />
-            <div class="flex">
-              <tw-button type="primary" round class="w-full" @click="deleteMateri"
-                >Hapus</tw-button
-              >
-              <tw-button round class="w-full" @click="toggleModal">Cancel</tw-button>
-            </div>
-          </div>
-        </vue-final-modal>
+        <tw-button round class="w-full" @click="toggleModal">Cancel</tw-button>
+      </div>
+    </div>
+  </vue-final-modal>
 </template>
 
 <script setup>
@@ -183,12 +229,15 @@ import { computed, onMounted, reactive, ref, onUpdated } from "vue";
 import { $vfm, VueFinalModal, ModalsContainer } from "vue-final-modal";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
+
+import wysiwyg from "../components/WYSIWYG.vue" 
+
 import axios from "../api/axios";
 
 import DangerAlert from "@/components/DangerAlert.vue";
 import SuccessAlert from "@/components/SuccessAlert.vue";
 
-const GET_DISMODAL = computed(()=>store.getters.GET_DISMODAL)
+const GET_DISMODAL = computed(() => store.getters.GET_DISMODAL);
 const items = ref([]);
 const store = useStore();
 const route = useRoute();
@@ -200,6 +249,7 @@ const show = ref(false);
 const headers = [
   { text: "NAME", value: "name" },
   { text: "DESKRIPSI", value: "deskripsi_content" },
+  {text:"STATUS MATERI", value:"isLocked"},
   { text: "ACTIONS", value: "actions" },
 ];
 
@@ -217,6 +267,7 @@ function openModal(params) {
   materi.name = "";
   materi.content = "";
   materi.deskripsi_content = "";
+  materi.isLocked = null;
   store.commit("SET_SUCC_MSG", null);
   store.commit("SET_ERR_MSG", null);
 
@@ -232,6 +283,7 @@ const materi = reactive({
   name: "",
   deskripsi_content: "",
   content: "",
+  isLocked: null,
   kelaId: route.params.id,
 });
 
@@ -246,9 +298,10 @@ async function addMateri() {
   materi.name = "";
   materi.content = "";
   materi.deskripsi_content = "";
+  materi.isLocked = null;
 }
 
-function restoreEdit(id, name, content, deskripsi_content) {
+function restoreEdit(id, name, content, deskripsi_content, status) {
   store.commit("SET_SUCC_MSG", null);
   store.commit("SET_ERR_MSG", null);
   showModal.value = !showModal.value;
@@ -256,6 +309,7 @@ function restoreEdit(id, name, content, deskripsi_content) {
   materi.name = name;
   materi.content = content;
   materi.deskripsi_content = deskripsi_content;
+  materi.isLocked = status;
   statusmodal.value = false;
 }
 
@@ -270,6 +324,7 @@ async function editMateri(params) {
       materi.name = "";
       materi.content = "";
       materi.deskripsi_content = "";
+      materi.isLocked = null;
       statusmodal.value = true;
     })
     .catch((err) => {});
@@ -281,7 +336,7 @@ async function deleteMateri() {
       .delete(`/materi/${materi.id}`)
       .then((res) => {
         msg.succ = res.data.message;
-         store.dispatch("TOGGLE_DELETE_MODAL") 
+        store.dispatch("TOGGLE_DELETE_MODAL");
       })
       .catch((err) => {
         msg.err = err.response.data.message;
@@ -297,8 +352,8 @@ const getMateri = async () => {
 };
 
 async function toggleModal(id) {
-  materi.id = id
-  await store.dispatch("TOGGLE_DELETE_MODAL") 
+  materi.id = id;
+  await store.dispatch("TOGGLE_DELETE_MODAL");
 }
 
 onMounted(() => {
@@ -311,6 +366,7 @@ onUpdated(() => {
 </script>
 
 <style>
+
 .formkit-message {
   color: red;
 }
@@ -318,4 +374,5 @@ onUpdated(() => {
 [data-type="submit"] .formkit-input {
   @apply text-white bg-purple-400 border border-purple-400 hover:opacity-90 text-sm px-5 py-2 rounded-3xl ml-1.5;
 }
+
 </style>

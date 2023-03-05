@@ -83,7 +83,7 @@ const errMsg = computed(()=>{
 
 <style >
 #login{
-  @apply bg-white w-96 px-8 py-6 rounded-md
+  @apply bg-white w-80 sm:w-96 px-8 py-6 rounded-md
 }
 [data-type="submit"] .formkit-input {
     @apply text-white bg-green-400 border border-green-400 hover:opacity-90 text-sm px-5 py-2 rounded-3xl ml-1.5 font-medium

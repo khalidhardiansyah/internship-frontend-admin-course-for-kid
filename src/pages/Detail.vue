@@ -2,13 +2,13 @@
   <div class="flex flex-col">
     <h1 class="text-3xl font-bold capitalize mb-8">{{ title }}</h1>
 
-    <div class="flex flex-row space-x-5">
-      <div class="w-56">
+    <div class="flex flex-col sm:flex-row sm:space-x-5">
+      <div class="flex flex-row sm:flex-col sm:w-56">
         <menu-item text="Kelas Details"  :route="{ name: 'update' }" />
         <menu-item text="Materi Kelas"  :route="{ name: 'materi' }" />
         <menu-item text="Manage Kelas"  :route="{ name: 'delete' }" />
       </div>
-      <div class="flex-1 bg-purple-50 rounded-xl p-10 ">
+      <div class="flex-1 bg-purple-50 rounded-xl p-10 -mt-3 sm:mt-0 ">
         <router-view></router-view>
       </div>
     </div>

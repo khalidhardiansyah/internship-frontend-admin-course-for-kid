@@ -41,6 +41,7 @@
             input-class="w-full h-24 px-3 border-none text-base text-gray-700 placeholder-gray-400"
             help-class="text-xs text-gray-500"
           />
+          <!-- <WYSIWYG v-model="dataKelas.deskripsi_kelas"></WYSIWYG> -->
           <FormKit
             type="number"
             v-model="dataKelas.harga"
